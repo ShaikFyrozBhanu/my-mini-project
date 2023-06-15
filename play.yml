@@ -1,0 +1,5 @@
+---
+- name: Deploy NGINX to Kubernetes
+  hosts: localhost
+  roles:
+    - nginx-role

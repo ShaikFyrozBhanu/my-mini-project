@@ -1,0 +1,44 @@
+---
+- name: Pull ECR image
+  shell: docker pull 001037935354.dkr.ecr.ap-south-1.amazonaws.com/ecr:latest
+
+- name: Deploy NGINX Deployment
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: nginx-dep
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: nginx
+        template:
+          metadata:
+            labels:
+              app: nginx
+          spec:
+            containers:
+              - name: nginx
+                image: "001037935354.dkr.ecr.ap-south-1.amazonaws.com/ecr:latest"
+                ports:
+                  - containerPort: 80
+
+- name: Create NGINX Service
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: nginx-service
+      spec:
+        selector:
+          app: nginx
+        ports:
+          - protocol: TCP
+            port: 80
+            targetPort: 80
+
